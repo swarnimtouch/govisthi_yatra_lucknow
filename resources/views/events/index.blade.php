@@ -235,20 +235,6 @@
             <div class="section-title">📍 Your Information</div>
             <div class="section-sub">Fill all details and upload your photo</div>
 
-            {{-- City --}}
-            <div class="form-group">
-                <label>Select City <span style="color:red">*</span></label>
-                <select name="city" id="city" required>
-                    <option value="">-- Select City --</option>
-                    @foreach($cities as $city => $info)
-                        <option value="{{ $city }}" {{ old('city') == $city ? 'selected' : '' }}>
-                            {{ $city }}
-                        </option>
-                    @endforeach
-                </select>
-                <div class="field-error" id="city-error">Please select a city to continue.</div>
-            </div>
-
             {{-- Gender --}}
             <div class="form-group">
                 <label>Gender <span style="color:red">*</span></label>
@@ -257,14 +243,14 @@
                         <input type="radio" name="gender" id="gender-male" value="male"
                             {{ old('gender', 'male') === 'male' ? 'checked' : '' }}>
                         <label class="gender-label" for="gender-male">
-                             Male
+                            Male
                         </label>
                     </div>
                     <div class="gender-option">
                         <input type="radio" name="gender" id="gender-female" value="female"
                             {{ old('gender') === 'female' ? 'checked' : '' }}>
                         <label class="gender-label" for="gender-female">
-                             Female
+                            Female
                         </label>
                     </div>
                 </div>
@@ -353,17 +339,6 @@
         function validateAndSubmit() {
             let ok = true;
 
-            const city = document.getElementById('city').value;
-            if (!city) {
-                document.getElementById('city-error').classList.add('show');
-                document.getElementById('city').classList.add('error');
-                if (ok) showToast('Please select a city.');
-                ok = false;
-            } else {
-                document.getElementById('city-error').classList.remove('show');
-                document.getElementById('city').classList.remove('error');
-            }
-
             const gender = document.querySelector('input[name="gender"]:checked');
             if (!gender) {
                 document.getElementById('gender-error').classList.add('show');
@@ -401,10 +376,6 @@
         }
 
         // ── Input clear errors ─────────────────────────────────────────────────────────
-        document.getElementById('city').addEventListener('change', function() {
-            document.getElementById('city-error').classList.remove('show');
-            this.classList.remove('error');
-        });
         document.getElementById('full_name').addEventListener('input', function() {
             document.getElementById('name-error').classList.remove('show');
             this.classList.remove('error');

@@ -11,21 +11,24 @@ use Intervention\Image\Typography\FontFactory;
 
 class EventRegistrationController extends Controller
 {
-    const PHOTO_X      = 654;
-    const PHOTO_Y      = 1061;
-    const PHOTO_WIDTH  = 180;
-    const PHOTO_HEIGHT = 215;
 
-    const NAME_X       = 870;
-    const NAME_Y       = 1224;
-    const NAME_MAX_WIDTH = 420;   // banner par name ka max pixel width
+    const DEFAULT_CITY = 'Lucknow (24 July)';
+
+    const PHOTO_X      = 518;
+    const PHOTO_Y      = 485;
+    const PHOTO_WIDTH  = 141;
+    const PHOTO_HEIGHT = 175;
+
+    const NAME_X       = 525;
+    const NAME_Y       = 669;
+    const NAME_MAX_WIDTH = 129;
     const NAME_MIN_SIZE  = 16;
-    const NAME_SIZE    = 35;
+    const NAME_SIZE    = 30;
 
     public function index()
     {
-        $cities = EventRegistration::cityData();
-        return view('events.index', compact('cities'));
+
+        return view('events.index');
     }
 
     public function store(Request $request)
@@ -35,19 +38,18 @@ class EventRegistrationController extends Controller
             'gender'        => 'required|in:male,female',
             'mobile'        => 'nullable|string|max:15',
             'email'         => 'nullable|email|max:191',
-            'city'          => 'required|string',
             'cropped_photo' => 'required|string',
         ]);
 
         $cities = EventRegistration::cityData();
 
-        if (!isset($cities[$request->city])) {
+        if (!isset($cities[self::DEFAULT_CITY])) {
             return back()->withErrors([
-                'city' => 'Invalid city selected.'
+                'city' => 'Invalid city configuration. Check DEFAULT_CITY constant.'
             ]);
         }
 
-        $cityInfo = $cities[$request->city];
+        $cityInfo = $cities[self::DEFAULT_CITY];
 
         /*
         |--------------------------------------------------------------------------
@@ -64,7 +66,7 @@ class EventRegistrationController extends Controller
         $fullName = preg_replace('/[^A-Za-z0-9_-]/', '_', $request->full_name);
 
         $croppedFilename = 'cropped_'. $fullName .'.jpg';
-        $croppedPath     = 'govisthi_yatra/cropped/' . $croppedFilename;
+        $croppedPath     = 'govisthi_yatra_lucknow/cropped/' . $croppedFilename;
 
         Storage::disk('s3')->put(
             $croppedPath,
@@ -77,10 +79,8 @@ class EventRegistrationController extends Controller
 
         $bannerOutput = null;
 
-
         $bannerKey  = $request->gender === 'female' ? 'banner_f' : 'banner';
         $bannerFile = public_path('banners/' . ($cityInfo[$bannerKey] ?? $cityInfo['banner']));
-
 
         if (file_exists($bannerFile)) {
 
@@ -138,11 +138,9 @@ class EventRegistrationController extends Controller
                 );
             }
 
-
-
             $bannerFilename = 'banner_'. $fullName .'.jpg';
 
-            $bannerOutput   = 'govisthi_yatra/banners/' . $bannerFilename;
+            $bannerOutput   = 'govisthi_yatra_lucknow/banners/' . $bannerFilename;
 
             $encodedBanner = $banner->toJpeg(90);
 
@@ -156,13 +154,12 @@ class EventRegistrationController extends Controller
             );
         }
 
-
         $registration = EventRegistration::create([
             'full_name'        => $request->full_name,
             'gender'           => $request->gender,
             'mobile'           => $request->mobile,
             'email'            => $request->email,
-            'city'             => $request->city,
+            'city'             => self::DEFAULT_CITY,
 
             'event_date' => \Carbon\Carbon::createFromFormat(
                 'j F Y',
