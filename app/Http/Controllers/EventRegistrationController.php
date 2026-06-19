@@ -11,10 +11,6 @@ use Intervention\Image\Typography\FontFactory;
 
 class EventRegistrationController extends Controller
 {
-    // 👇 Dropdown hata diya — yahi city/date/banner sabke liye use hoga.
-    // NOTE: cityData() mein "28 July" ka koi entry nahi tha, isliye
-    // closest match 'Lucknow (24 July)' use kiya hai. Agar alag chahiye
-    // to bas yeh ek line change karna.
     const DEFAULT_CITY = 'Lucknow (28 July)';
 
     const PHOTO_X      = 518;
@@ -22,16 +18,14 @@ class EventRegistrationController extends Controller
     const PHOTO_WIDTH  = 141;
     const PHOTO_HEIGHT = 175;
 
-    const NAME_X       = 528;
-    const NAME_Y       = 677;
-    const NAME_MAX_WIDTH = 129;   // banner par name ka max pixel width
-    const NAME_MIN_SIZE  = 11;    // 👈 8 se thoda upar — text invisible nahi hona chahiye
+    const NAME_X       = 590;
+    const NAME_Y       = 675;
+    const NAME_MAX_WIDTH = 129;
+    const NAME_MIN_SIZE  = 11;
     const NAME_SIZE    = 35;
 
     public function index()
     {
-        // Cities ki ab zarurat nahi view ko, lekin agar kahin aur use ho
-        // rahi ho to compact() hata sakte ho. View bhi update kar diya hai.
         return view('events.index');
     }
 
@@ -55,11 +49,6 @@ class EventRegistrationController extends Controller
 
         $cityInfo = $cities[self::DEFAULT_CITY];
 
-        /*
-        |--------------------------------------------------------------------------
-        | Upload Cropped Photo To S3
-        |--------------------------------------------------------------------------
-        */
         $base64 = preg_replace(
             '/^data:image\/\w+;base64,/',
             '',
@@ -112,31 +101,28 @@ class EventRegistrationController extends Controller
 
             if (file_exists($fontPath)) {
 
-                // ─── Auto font size ───────────────────────────────────────
-                $fontSize = self::NAME_SIZE; // 35 se shuru
+                $fontSize = self::NAME_SIZE;
 
                 while ($fontSize > self::NAME_MIN_SIZE) {
-                    // imagettfbbox: GD se text ka bounding box milta hai
                     $bbox      = imagettfbbox($fontSize, 0, $fontPath, $request->full_name);
-                    $textWidth = abs($bbox[4] - $bbox[0]); // actual pixel width
+                    $textWidth = abs($bbox[4] - $bbox[0]);
 
                     if ($textWidth <= self::NAME_MAX_WIDTH) {
-                        break; // fit ho gaya, loop band
+                        break;
                     }
 
-                    $fontSize--; // ek ek pixel kam karo
+                    $fontSize--;
                 }
-                // ─────────────────────────────────────────────────────────
 
                 $banner->text(
                     $request->full_name,
                     self::NAME_X,
                     self::NAME_Y,
-                    function (FontFactory $font) use ($fontPath, $fontSize) {  // $fontSize pass karo
+                    function (FontFactory $font) use ($fontPath, $fontSize) {
                         $font->file($fontPath);
-                        $font->size($fontSize);   // dynamic size
+                        $font->size($fontSize);
                         $font->color('#000000');
-                        $font->align('left');
+                        $font->align('center');
                         $font->valign('top');
                     }
                 );
