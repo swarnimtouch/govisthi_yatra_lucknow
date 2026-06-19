@@ -81,7 +81,7 @@ class EventRegistration extends Model
             ],
             'Lucknow (28 July)' => [
                 'date'     => '28 July',
-                'banner'   => 'lucknow-24-july.png',
+                'banner'   => 'lucknow-28-july.png',
                 'banner_f' => 'lucknow-28-july-f.png',
             ],
         ];

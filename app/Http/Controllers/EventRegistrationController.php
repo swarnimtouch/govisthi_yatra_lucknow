@@ -11,23 +11,27 @@ use Intervention\Image\Typography\FontFactory;
 
 class EventRegistrationController extends Controller
 {
-
-    const DEFAULT_CITY = 'Lucknow (24 July)';
+    // 👇 Dropdown hata diya — yahi city/date/banner sabke liye use hoga.
+    // NOTE: cityData() mein "28 July" ka koi entry nahi tha, isliye
+    // closest match 'Lucknow (24 July)' use kiya hai. Agar alag chahiye
+    // to bas yeh ek line change karna.
+    const DEFAULT_CITY = 'Lucknow (28 July)';
 
     const PHOTO_X      = 518;
     const PHOTO_Y      = 485;
     const PHOTO_WIDTH  = 141;
     const PHOTO_HEIGHT = 175;
 
-    const NAME_X       = 525;
-    const NAME_Y       = 669;
-    const NAME_MAX_WIDTH = 129;
-    const NAME_MIN_SIZE  = 16;
-    const NAME_SIZE    = 30;
+    const NAME_X       = 528;
+    const NAME_Y       = 677;
+    const NAME_MAX_WIDTH = 129;   // banner par name ka max pixel width
+    const NAME_MIN_SIZE  = 11;    // 👈 8 se thoda upar — text invisible nahi hona chahiye
+    const NAME_SIZE    = 35;
 
     public function index()
     {
-
+        // Cities ki ab zarurat nahi view ko, lekin agar kahin aur use ho
+        // rahi ho to compact() hata sakte ho. View bhi update kar diya hai.
         return view('events.index');
     }
 
@@ -131,7 +135,7 @@ class EventRegistrationController extends Controller
                     function (FontFactory $font) use ($fontPath, $fontSize) {  // $fontSize pass karo
                         $font->file($fontPath);
                         $font->size($fontSize);   // dynamic size
-                        $font->color('#FFFFFF');
+                        $font->color('#000000');
                         $font->align('left');
                         $font->valign('top');
                     }
