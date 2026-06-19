@@ -11,7 +11,7 @@ use Intervention\Image\Typography\FontFactory;
 
 class EventRegistrationController extends Controller
 {
-    const DEFAULT_CITY = 'Lucknow (28 July)';
+    const DEFAULT_CITY = 'Lucknow (24 July)';
 
     const PHOTO_X      = 518;
     const PHOTO_Y      = 485;
