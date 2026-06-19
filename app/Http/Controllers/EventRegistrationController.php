@@ -19,7 +19,7 @@ class EventRegistrationController extends Controller
     const PHOTO_HEIGHT = 175;
 
     const NAME_X       = 590;
-    const NAME_Y       = 675;
+    const NAME_Y       = 678;
     const NAME_MAX_WIDTH = 129;
     const NAME_MIN_SIZE  = 11;
     const NAME_SIZE    = 35;
