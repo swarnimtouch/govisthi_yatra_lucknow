@@ -13,16 +13,16 @@ class EventRegistrationController extends Controller
 {
     const DEFAULT_CITY = 'Lucknow (24 July)';
 
-    const PHOTO_X      = 518;
-    const PHOTO_Y      = 485;
-    const PHOTO_WIDTH  = 141;
-    const PHOTO_HEIGHT = 175;
+    const PHOTO_X      = 615;
+    const PHOTO_Y      = 1044;
+    const PHOTO_WIDTH  = 189;
+    const PHOTO_HEIGHT = 233;
 
-    const NAME_X       = 590;
-    const NAME_Y       = 678;
-    const NAME_MAX_WIDTH = 129;
-    const NAME_MIN_SIZE  = 11;
-    const NAME_SIZE    = 35;
+    const NAME_X       = 820;
+    const NAME_Y       = 1224;
+    const NAME_MAX_WIDTH = 420;   // banner par name ka max pixel width
+    const NAME_MIN_SIZE  = 20;
+    const NAME_SIZE    = 25;
 
     public function index()
     {
@@ -103,15 +103,18 @@ class EventRegistrationController extends Controller
 
                 $fontSize = self::NAME_SIZE;
 
-                while ($fontSize > self::NAME_MIN_SIZE) {
-                    $bbox      = imagettfbbox($fontSize, 0, $fontPath, $request->full_name);
-                    $textWidth = abs($bbox[4] - $bbox[0]);
+                $bbox = imagettfbbox($fontSize, 0, $fontPath, $request->full_name);
+                $textWidth = abs($bbox[4] - $bbox[0]);
 
-                    if ($textWidth <= self::NAME_MAX_WIDTH) {
-                        break;
+                if ($textWidth > self::NAME_MAX_WIDTH) {
+
+                    $ratio = self::NAME_MAX_WIDTH / $textWidth;
+
+                    $fontSize = floor($fontSize * $ratio);
+
+                    if ($fontSize < self::NAME_MIN_SIZE) {
+                        $fontSize = self::NAME_MIN_SIZE;
                     }
-
-                    $fontSize--;
                 }
 
                 $banner->text(
@@ -120,9 +123,9 @@ class EventRegistrationController extends Controller
                     self::NAME_Y,
                     function (FontFactory $font) use ($fontPath, $fontSize) {
                         $font->file($fontPath);
-                        $font->size($fontSize);
-                        $font->color('#000000');
-                        $font->align('center');
+                        $font->size($fontSize);   // dynamic size
+                        $font->color('#FFFFFF');
+                        $font->align('left');
                         $font->valign('top');
                     }
                 );
