@@ -13,16 +13,16 @@ class EventRegistrationController extends Controller
 {
     const DEFAULT_CITY = 'Lucknow (24 July)';
 
-    const PHOTO_X      = 615;
-    const PHOTO_Y      = 1044;
-    const PHOTO_WIDTH  = 189;
-    const PHOTO_HEIGHT = 233;
+    const PHOTO_X      = 641;
+    const PHOTO_Y      = 1074;
+    const PHOTO_WIDTH  = 182;
+    const PHOTO_HEIGHT = 226;
 
-    const NAME_X       = 820;
-    const NAME_Y       = 1224;
-    const NAME_MAX_WIDTH = 420;   // banner par name ka max pixel width
+    const NAME_X       = 845;
+    const NAME_Y       = 1250;
+    const NAME_MAX_WIDTH = 222;   // banner par name ka max pixel width
     const NAME_MIN_SIZE  = 20;
-    const NAME_SIZE    = 25;
+    const NAME_SIZE    = 30;
 
     public function index()
     {
