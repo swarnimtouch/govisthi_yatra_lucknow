@@ -14,15 +14,17 @@ class EventRegistrationController extends Controller
     const DEFAULT_CITY = 'Lucknow (24 July)';
 
     const PHOTO_X      = 641;
-    const PHOTO_Y      = 1074;
+    const PHOTO_Y      = 1065;
     const PHOTO_WIDTH  = 182;
     const PHOTO_HEIGHT = 226;
 
-    const NAME_X       = 845;
-    const NAME_Y       = 1250;
-    const NAME_MAX_WIDTH = 222;   // banner par name ka max pixel width
-    const NAME_MIN_SIZE  = 20;
-    const NAME_SIZE    = 30;
+    const NAME_X         = 851;
+    const NAME_Y         = 1250;
+    const NAME_MAX_WIDTH = 222;
+    const NAME_SIZE_BIG  = 40;
+    const NAME_SIZE_MID  = 30;
+    const NAME_SIZE_SMALL = 25;
+    const NAME_MIN_SIZE  = 24;
 
     public function index()
     {
@@ -101,21 +103,29 @@ class EventRegistrationController extends Controller
 
             if (file_exists($fontPath)) {
 
-                $fontSize = self::NAME_SIZE;
+                $nameLength = mb_strlen($request->full_name);
 
-                $bbox = imagettfbbox($fontSize, 0, $fontPath, $request->full_name);
-                $textWidth = abs($bbox[4] - $bbox[0]);
-
-                if ($textWidth > self::NAME_MAX_WIDTH) {
-
-                    $ratio = self::NAME_MAX_WIDTH / $textWidth;
-
-                    $fontSize = floor($fontSize * $ratio);
-
-                    if ($fontSize < self::NAME_MIN_SIZE) {
-                        $fontSize = self::NAME_MIN_SIZE;
-                    }
+                if ($nameLength <= 12) {
+                    $fontSize = self::NAME_SIZE_BIG;      // 30
+                } elseif ($nameLength <= 20) {
+                    $fontSize = self::NAME_SIZE_MID;      // 24
+                } else {
+                    $fontSize = self::NAME_SIZE_SMALL;    // 18
                 }
+
+
+
+                do {
+                    $bbox = imagettfbbox($fontSize, 0, $fontPath, $request->full_name);
+                    $textWidth = abs($bbox[4] - $bbox[0]);
+
+                    if ($textWidth <= self::NAME_MAX_WIDTH) {
+                        break;
+                    }
+
+                    $fontSize--;
+
+                } while ($fontSize > self::NAME_MIN_SIZE);
 
                 $banner->text(
                     $request->full_name,
@@ -123,13 +133,14 @@ class EventRegistrationController extends Controller
                     self::NAME_Y,
                     function (FontFactory $font) use ($fontPath, $fontSize) {
                         $font->file($fontPath);
-                        $font->size($fontSize);   // dynamic size
+                        $font->size($fontSize);
                         $font->color('#FFFFFF');
                         $font->align('left');
                         $font->valign('top');
                     }
                 );
             }
+
 
             $bannerFilename = 'banner_'. $fullName .'.jpg';
 
